@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Something.EditTask"
+          >
+    <VerticalStackLayout>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+               
+                
+            </Grid.ColumnDefinitions>
+            <Label Text="Номер заказа: " Grid.Row="0"/>
+            <Entry Placeholder="0000" Grid.Row="1" x:Name="OrderNumberInput"/>
+            <Label Text="Адрес: "  Grid.Row="2"/>
+            <Entry Placeholder="г.Нигде, ул.Никакая, д.0" Grid.Row="3" x:Name="AddressInput"/>
+            <Label Text="Дата: " Grid.Row="4"/>
+            <DatePicker Grid.Row="5" x:Name="DateInput"/>
+            <Label Text="Модель: " Grid.Row="6"/>
+            <Entry Placeholder="Noname ABC300" Grid.Row="7" x:Name="ModelInput"/>
+            <Label Text="Примечание: " Grid.Row="8"/>
+            <Entry Placeholder="Диагностика" Grid.Row="9" x:Name="NotesInput"/>
+            <Label Text="Время: " Grid.Row="10"/>
+            <TimePicker Format="T" Grid.Row="11" x:Name="TimeInput"/>
+        </Grid>
+        <Button Clicked="Button_Clicked" HorizontalOptions="End" VerticalOptions="End" HeightRequest="50" WidthRequest="50" Margin="25" Text="+" FontAutoScalingEnabled="True" FontSize="32" CornerRadius="100"/>
+    </VerticalStackLayout>
+</ContentPage>
