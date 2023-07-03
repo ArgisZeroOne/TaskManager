@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Something;
 
 public partial class EnterPage : ContentPage
@@ -5,6 +7,7 @@ public partial class EnterPage : ContentPage
 	public EnterPage()
 	{
 		InitializeComponent();
+		
         InitUser();
 		 
     }
@@ -15,7 +18,7 @@ public partial class EnterPage : ContentPage
 		Enter.IsEnabled = true;
 		UserData.IsEnabled = false;
 		UserData.IsVisible = false;
-		MainLabel.Text = "Вход";
+		
 	}
 	public void UserForm(User user)
 	{
@@ -23,11 +26,11 @@ public partial class EnterPage : ContentPage
         Enter.IsEnabled = false;
         UserData.IsEnabled = true;
         UserData.IsVisible = true;
-        username.Text = "Имя пользователя: " + user.Username();
-		firstname.Text = "Имя: " +  user.FirstName();
-		lastname.Text =  "Фамилия: " + user.LastName();
-		rights.Text = "Права: " + user.Rights();
-		MainLabel.Text = "Здравствуйте, " + user.FirstName();
+        usernametxt.Text = user.Username();
+		firstname.Text = user.FirstName();
+		lastname.Text =  user.LastName();
+		
+		
 
     }
     public void InitUser()
@@ -37,18 +40,22 @@ public partial class EnterPage : ContentPage
         UsersDatabase UserDB = new UsersDatabase();
 		var username = user.Username();
 		var password = user.Password();
-        var userInDB = UserDB.ChooseUser(username,password);
+		User userInDB = null;
 
+        try
+		{
+            userInDB = UserDB.ChooseUser(username, password);
+        } catch (Exception ex) { Debug.WriteLine(ex); }
         if (userInDB != null) UserForm(userInDB);
-		else EnterForm();
-		
+        else EnterForm();
+
     }
 	private void OnEnterBtnClicked(object sender, EventArgs e)
 	{
 		UsersDatabase UserDB = new UsersDatabase();
 		
 		User user = UserDB.ChooseUser(usernameInput.Text,PasswordInput.Text);
-		MainLabel.Text = "Здравствуйте, " + user.Username();
+		
 		UsersDatabase.WriteLocalUserSettings(user);
 		InitUser();
     }
@@ -58,4 +65,6 @@ public partial class EnterPage : ContentPage
 		Preferences.Default.Clear();
 		InitUser();
     }
+
+  
 }

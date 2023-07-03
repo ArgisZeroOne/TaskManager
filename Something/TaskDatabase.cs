@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,20 +11,22 @@ namespace Something
 {
     class TaskDatabase
     {
+        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
+      
         public void NewTask()
         {
 
         }
         public static void CreateTask(Task task)
         {
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+          
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
 
                 string query = "INSERT Into TasksData (orderNumber, address, date, model, notes, time) VALUES (@ordernumber, @address,@date,@model,@notes,@time)";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@ordernumber", task.OrderNumber + "");
                 cmd.Parameters.AddWithValue("@address", task.Address + "");
                 cmd.Parameters.AddWithValue("@date", task.Date);
@@ -41,14 +43,14 @@ namespace Something
         public static List<Task> GetAllTasksFromDB()
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+           
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
 
                 string query = "SELECT * FROM TasksData order by date";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
                 tasks = ReadTask(cmd);
 
@@ -58,52 +60,59 @@ namespace Something
         public static List<Task> GetTodayTasksFromDB()
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
 
                 string query = "SELECT * FROM TasksData where date = @date order by date";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
-                cmd.Parameters.AddWithValue("@date", DateTime.Today.ToString());
+
+                cmd.Parameters.AddWithValue("@date", DateTime.Today.Date.ToString("yyyy-MM-dd"));
 
                 tasks = ReadTask(cmd);
-
+              
             }
             return tasks;
         }
-       static List<Task> ReadTask(SqlCommand cmd)
+       static List<Task> ReadTask(MySqlCommand cmd)
         {
             List<Task> taskList = new List<Task>();
 
-            SqlDataReader reader = cmd.ExecuteReader();
+            MySqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
                 try
                 {
-                    Task task = new Task(reader.GetString(0), reader.GetString(1), reader.GetDateTime(2).ToString("dd/MM/yyyy"), reader.GetString(3), reader.GetString(4), reader.GetTimeSpan(5).ToString());
+                   
+                    Task task = new Task(reader.GetString(0), reader.GetString(1), reader.GetDateTime(2).Date.ToString("dd/MM/yyyy"), reader.GetString(3), reader.GetString(4), reader.GetTimeSpan(5).ToString());
                     taskList.Add(task);
                 } catch(Exception ex) { 
-                    Debug.WriteLine(ex.Message);
+                   
                 }
                 
 
             }
-            return taskList;
+            if (taskList != null) return taskList;
+            else
+            {
+                taskList.Add(new Task());
+                return taskList;
+            }
         }
         public static void SetTimeToTask(string orderNumber,string newTime)
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+           
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData set time = @time from (select * from TasksData where orderNumber = @ordernumber) as Selected where TasksData.orderNumber = Selected.orderNumber";
+                var query = "Update TasksData, (select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.time = @time where TasksData.orderNumber = Selected.orderNumber";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@time", newTime);
 
@@ -115,13 +124,13 @@ namespace Something
         public static void SetAddressToTask(string orderNumber,  string newAddress)
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData set address = @address from (select * from TasksData where orderNumber = @ordernumber) as Selected where TasksData.orderNumber = Selected.orderNumber";
+                var query = "Update TasksData, (select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.address = @address where TasksData.orderNumber = Selected.orderNumber";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@address", newAddress);
 
@@ -136,13 +145,13 @@ namespace Something
         public static void SetDateToTask(string orderNumber, string newDate)
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData set date = @date from (select * from TasksData where orderNumber = @ordernumber) as Selected where TasksData.orderNumber = Selected.orderNumber";
+                var query = "Update TasksData,(select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.date = @date  where TasksData.orderNumber = Selected.orderNumber";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
                 try
                 {
                     cmd.Parameters.AddWithValue("@date", newDate);
@@ -169,13 +178,13 @@ namespace Something
         public static void SetModelToTask(string orderNumber, string newModel)
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData set model = @model from (select * from TasksData where orderNumber = @ordernumber) as Selected where TasksData.orderNumber = Selected.orderNumber";
+                var query = "Update TasksData,(select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.model = @model where TasksData.orderNumber = Selected.orderNumber";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@model", newModel);
 
@@ -196,13 +205,13 @@ namespace Something
         public static void SetNoteToTask(string orderNumber, string newNote)
         {
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+           
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData set notes = @notes from (select * from TasksData where orderNumber = @ordernumber) as Selected where TasksData.orderNumber = Selected.orderNumber";
+                var query = "Update TasksData,(select * from TasksData where orderNumber = @ordernumber) as Selected  set TasksData.notes = @notes where TasksData.orderNumber = Selected.orderNumber";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@notes", newNote);
 
@@ -220,15 +229,16 @@ namespace Something
         }
         public static List<Task> GetTasksFromDBToDate(string date)
         {
+
             List<Task> tasks = new List<Task>();
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+           
+            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
             {
                 connection.Open();
 
                 string query = "SELECT * FROM TasksData where date = @date order by date";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
 
                 cmd.Parameters.AddWithValue("@date", date);
 

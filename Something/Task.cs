@@ -16,6 +16,7 @@ namespace Something
 
         public string Time { get; set; }
 
+        public Task() { }
         public Task(string orderNumber, string address, string date, string model, string notes, string time)
         {
             OrderNumber = orderNumber;

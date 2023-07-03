@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿
+using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,13 @@ namespace Something
     class UsersDatabase
     {
         
-        private SqlConnection _usersData;
+        private MySqlConnection _usersData;
         void Connect(string connectionString)
         {
             // for example default connection string:
             // @"Data Source=.\kitsune;Initial Catalog=UsersData;"
 
-            this._usersData = new SqlConnection(connectionString);
+            this._usersData = new MySqlConnection(connectionString);
         }
         void CreateUser(string username, string password)
         {
@@ -56,17 +57,18 @@ namespace Something
             byte[] hashValue = SHA256.HashData(messageBytes);
 
             string passwordHash = Convert.ToHexString(hashValue);
-            string connectionString = @"Server=tcp:90.189.194.247, 1433;User Id = nikko;pwd = kimura2023;Database=task_manager;TrustServerCertificate=Yes";
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            
+            string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
              
                 string query = "select * from UsersData where username =@username";
 
-                SqlCommand cmd = new SqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@username", username);
 
-                SqlDataReader reader = cmd.ExecuteReader();
+                MySqlDataReader reader = cmd.ExecuteReader();
                 string usernamefrombase = null;
                 string passwordfrombase = null;
                 string firstnamefrombase = null;

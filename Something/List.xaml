@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Something.List"
+             >
+    <StackLayout VerticalOptions="Fill">
+        <VerticalStackLayout VerticalOptions="FillAndExpand">
+
+            <Border BackgroundColor="#FAFF78" WidthRequest="100" HeightRequest="40" HorizontalOptions="Start" Margin="10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15"/>
+                </Border.StrokeShape>
+                <DatePicker HorizontalOptions="CenterAndExpand" VerticalOptions="Center"  FontAutoScalingEnabled="True" FontSize="15" x:Name="DatePicker" DateSelected="DatePicker_DateSelected" TextColor="#651DA8"/>
+            </Border>
+
+
+            <ListView x:Name="TasksListView" ItemTapped="TasksListView_ItemTapped" VerticalOptions="Fill" HeightRequest="300" MinimumHeightRequest="250" Margin="10,0,10,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Border VerticalOptions="Fill" BackgroundColor="#FAFF78" >
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="15"/>
+                                    </Border.StrokeShape>
+                                    <Grid HorizontalOptions="Fill"  Margin="10,0,10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Text="Номер заказа: " Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" TextColor="#651DA8"/>
+                                        <Label Text="Адрес: " Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" TextColor="#651DA8"/>
+                                        <Label Text="Время: " Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" TextColor="#651DA8"/>
+                                        <Label Text="{Binding OrderNumber}" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Grid.Row="1" FontSize="14"  TextColor="#651DA8"/>
+                                        <Label Text="{Binding Address}" Grid.Column="1" Grid.Row="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="14" TextColor="#651DA8"/>
+                                        <Label Text="{Binding Time}" Grid.Column="2" Grid.Row="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="14" TextColor="#651DA8"/>
+                                   
+                                    </Grid>
+
+                                </Border>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+   
+
+
+        </VerticalStackLayout>
+      <Button Clicked="Button_Clicked" CornerRadius="100" WidthRequest="70" HorizontalOptions="End" VerticalOptions="End" HeightRequest="70" Margin="25" BackgroundColor="#FAFF78" Text="+" TextColor="#651DA8" FontSize="36" FontAutoScalingEnabled="True" />
+        
+    </StackLayout>
+   
+</ContentPage>

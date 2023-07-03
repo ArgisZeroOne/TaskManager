@@ -1,22 +1,38 @@
 using System.Diagnostics;
-using System.Security.AccessControl;
-using System.Xml;
+
 
 namespace Something;
 
-public partial class TaskList : ContentPage
+public partial class List : ContentPage
 {
-    List<Task> taskArray;
+    List<Task> taskArray = new List<Task> { new Task(" ", " ", " ", " ", " ", " ") };
+    protected bool UserLogIn = false;
+    public List()
+	{
+		InitializeComponent();
 
-    public TaskList()
+	}
+    protected override void OnAppearing()
     {
-        InitializeComponent();
+        try
+        {
+            base.OnAppearing();
+
+            
+            InitUser();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
     }
     public async void InitUser()
     {
-    
+
         try
         {
+            UserLogIn = false;
             User user = UsersDatabase.ReadLocalUserSettings();
             UsersDatabase UserDB = new UsersDatabase();
             var username = user.Username();
@@ -24,29 +40,30 @@ public partial class TaskList : ContentPage
             var userInDB = UserDB.ChooseUser(username, password);
             if (userInDB == null)
             {
-                //await DisplayAlert("Ошибка", "Войдите в учетную запись", "ОK");
+                
+                taskArray = TaskDatabase.GetTasksFromDBToDate("01-01-1990");
+                TasksListView.ItemsSource = taskArray;
+                
             }
             else
             {
-
-
+                UserLogIn = true;
+                taskArray = TaskDatabase.GetTasksFromDBToDate(DatePicker.Date.ToString("yyyy-MM-dd"));
                 TasksListView.ItemsSource = taskArray;
+         
             }
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex);
+            
         }
 
     }
-
-  
-
     private void DatePicker_DateSelected(object sender, DateChangedEventArgs e)
     {
-        taskArray = TaskDatabase.GetTasksFromDBToDate(DatePicker.Date.ToString("yyyy-MM-dd"));
-       // InitUser();
-        
+      
+        InitUser();
+
     }
 
     private async void Button_Clicked(object sender, EventArgs e)
@@ -56,26 +73,12 @@ public partial class TaskList : ContentPage
 
     private async void TasksListView_ItemTapped(object sender, ItemTappedEventArgs e)
     {
-        var i = e.ItemIndex;
-
-        await Navigation.PushAsync(new EditTask(taskArray[i]));
-    }
-
-    protected override void OnAppearing()
-    {
-        try
+        if (UserLogIn)
         {
-            base.OnAppearing();
+            var i = e.ItemIndex;
 
-            taskArray = TaskDatabase.GetTasksFromDBToDate(DatePicker.Date.ToString("yyyy-MM-dd"));
-            //  TasksListView.ItemsSource = taskArray;
-            // InitUser();
+            await Navigation.PushAsync(new EditTask(taskArray[i]));
         }
-        catch (Exception ex)
-        {
-
-        }
-
+     
     }
-
 }

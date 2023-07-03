@@ -16,7 +16,8 @@ public partial class EditTask : ContentPage
         OrderNumberInput.IsEnabled = false;
         ModelInput.Text = input.Model;
         NotesInput.Text = input.Notes;
-        DateInput.Date = DateTime.Parse(input.Date);
+
+        DateInput.Date = DateTime.ParseExact(input.Date, "dd/MM/yyyy", null);
         TimeInput.Time = TimeSpan.Parse(input.Time);
         AddressInput.Text = input.Address;
     }
@@ -38,14 +39,14 @@ public partial class EditTask : ContentPage
         {
             TaskDatabase.SetModelToTask(ordernumber, ModelInput.Text);
             TaskDatabase.SetNoteToTask(ordernumber, NotesInput.Text);
-            TaskDatabase.SetDateToTask(ordernumber, DateInput.Date.ToString());
+            TaskDatabase.SetDateToTask(ordernumber, DateInput.Date.ToString("yyyy-MM-dd"));
             TaskDatabase.SetTimeToTask(ordernumber, TimeInput.Time.ToString());
             TaskDatabase.SetAddressToTask(ordernumber, AddressInput.Text);
             await Navigation.PopAsync();
 
         } else
         {
-            TaskDatabase.CreateTask(new Task(ordernumber, AddressInput.Text, DateInput.Date.ToString(), ModelInput.Text, NotesInput.Text, TimeInput.Time.ToString()));
+            TaskDatabase.CreateTask(new Task(ordernumber, AddressInput.Text, DateInput.Date.ToString("yyyy-MM-dd"), ModelInput.Text, NotesInput.Text, TimeInput.Time.ToString()));
             await Navigation.PopAsync();
 
         }
