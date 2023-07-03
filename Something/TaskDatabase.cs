@@ -5,19 +5,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using static CoreFoundation.DispatchSource;
+using static Android.App.DownloadManager;
 
 namespace Something
 {
     class TaskDatabase
     {
-        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
-      
-        public void NewTask()
-        {
 
-        }
-        public static void CreateTask(Task task)
+        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
+       
+        public void CreateTask(Task task)
         {
           
             using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
@@ -40,44 +37,7 @@ namespace Something
 
             
         }
-        public static List<Task> GetAllTasksFromDB()
-        {
-            List<Task> tasks = new List<Task>();
-           
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
-            {
-                connection.Open();
-
-                string query = "SELECT * FROM TasksData order by date";
-
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                tasks = ReadTask(cmd);
-
-            }
-            return tasks;
-        }
-        public static List<Task> GetTodayTasksFromDB()
-        {
-            List<Task> tasks = new List<Task>();
-            
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
-            {
-                connection.Open();
-
-                string query = "SELECT * FROM TasksData where date = @date order by date";
-
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-
-                cmd.Parameters.AddWithValue("@date", DateTime.Today.Date.ToString("yyyy-MM-dd"));
-
-                tasks = ReadTask(cmd);
-              
-            }
-            return tasks;
-        }
-       static List<Task> ReadTask(MySqlCommand cmd)
+        List<Task> ReadTask(MySqlCommand cmd)
         {
             List<Task> taskList = new List<Task>();
 
@@ -103,136 +63,81 @@ namespace Something
                 return taskList;
             }
         }
-        public static void SetTimeToTask(string orderNumber,string newTime)
+        void ExecuteSet(string orderNumber, string newvalue, string param, MySqlConnection connection, string query)
         {
-            List<Task> tasks = new List<Task>();
-           
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+
+            cmd.Parameters.AddWithValue(param, newvalue);
+
+            cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
+
+            cmd.ExecuteNonQuery();
+        }
+        public void SetTimeToTask(string orderNumber, string newTime)
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData, (select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.time = @time where TasksData.orderNumber = Selected.orderNumber";
+                ExecuteSet(orderNumber, newTime, "@time", connection, "Update TasksData, (select * from TasksData where orderNumber = @ordernumber) " +
+                    "as Selected set TasksData.time = @time" +
+                    " where TasksData.orderNumber = Selected.orderNumber");
 
-                MySqlCommand cmd = new MySqlCommand(query, connection);
 
-                cmd.Parameters.AddWithValue("@time", newTime);
-
-                cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
-
-                cmd.ExecuteNonQuery();
             };
         }
-        public static void SetAddressToTask(string orderNumber,  string newAddress)
+        public  void SetAddressToTask(string orderNumber,  string newAddress)
         {
-            List<Task> tasks = new List<Task>();
-            
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData, (select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.address = @address where TasksData.orderNumber = Selected.orderNumber";
+                ExecuteSet(orderNumber,newAddress,"@address",connection,"Update TasksData, (select * from TasksData where orderNumber = @ordernumber)" +
+                    " as Selected set TasksData.address = @address" +
+                    " where TasksData.orderNumber = Selected.orderNumber");
 
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                cmd.Parameters.AddWithValue("@address", newAddress);
-
-                cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                catch(Exception ex) { }
+               
             }
         }
-        public static void SetDateToTask(string orderNumber, string newDate)
+        public  void SetDateToTask(string orderNumber, string newDate)
         {
-            List<Task> tasks = new List<Task>();
-            
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData,(select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.date = @date  where TasksData.orderNumber = Selected.orderNumber";
-
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-                try
-                {
-                    cmd.Parameters.AddWithValue("@date", newDate);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-           
-
-                cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
-
-              
-                
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex) {
-                Debug.WriteLine(ex);
-                }
+                ExecuteSet(orderNumber,orderNumber,"@date",connection,"Update TasksData,(select * from TasksData where orderNumber = @ordernumber)" +
+                    " as Selected set TasksData.date = @date" +
+                    "  where TasksData.orderNumber = Selected.orderNumber");
             }
         }
-        public static void SetModelToTask(string orderNumber, string newModel)
+        public  void SetModelToTask(string orderNumber, string newModel)
         {
-            List<Task> tasks = new List<Task>();
-            
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData,(select * from TasksData where orderNumber = @ordernumber) as Selected set TasksData.model = @model where TasksData.orderNumber = Selected.orderNumber";
+                ExecuteSet(orderNumber,newModel,"@model",connection,"Update TasksData,(select * from TasksData where orderNumber = @ordernumber)" +
+                    " as Selected set TasksData.model = @model" +
+                    " where TasksData.orderNumber = Selected.orderNumber");
 
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                cmd.Parameters.AddWithValue("@model", newModel);
-
-                cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
-
-
-
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
+            
             }
         }
-        public static void SetNoteToTask(string orderNumber, string newNote)
+        public  void SetNoteToTask(string orderNumber, string newNote)
         {
             List<Task> tasks = new List<Task>();
            
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                var query = "Update TasksData,(select * from TasksData where orderNumber = @ordernumber) as Selected  set TasksData.notes = @notes where TasksData.orderNumber = Selected.orderNumber";
+                ExecuteSet(orderNumber,newNote,"@notes",connection,"Update TasksData,(select * from TasksData where orderNumber = @ordernumber)" +
+                    " as Selected  set TasksData.notes = @notes" +
+                    " where TasksData.orderNumber = Selected.orderNumber");
 
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                cmd.Parameters.AddWithValue("@notes", newNote);
-
-                cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
-
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
             }
         }
-        public static List<Task> GetTasksFromDBToDate(string date)
+        public  List<Task> GetTasksFromDBToDate(string date)
         {
 
             List<Task> tasks = new List<Task>();
            
-            using (MySqlConnection connection = new MySqlConnection(new TaskDatabase().connectionString))
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
 

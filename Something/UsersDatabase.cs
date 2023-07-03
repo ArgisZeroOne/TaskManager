@@ -11,23 +11,16 @@ namespace Something
 {
     class UsersDatabase
     {
-        
+        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
+
         private MySqlConnection _usersData;
         void Connect(string connectionString)
         {
-            // for example default connection string:
-            // @"Data Source=.\kitsune;Initial Catalog=UsersData;"
-
             this._usersData = new MySqlConnection(connectionString);
         }
-        void CreateUser(string username, string password)
+        void DeleteLocalUser()
         {
-
-        }
-        void DeleteUser()
-        {
-           // Preferences.Default.Clear();
-           
+           Preferences.Default.Clear();
         }
         public static User ReadLocalUserSettings()
         {
@@ -58,7 +51,7 @@ namespace Something
 
             string passwordHash = Convert.ToHexString(hashValue);
             
-            string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
+            
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();

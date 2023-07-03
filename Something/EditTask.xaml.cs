@@ -4,6 +4,7 @@ public partial class EditTask : ContentPage
 {
     public Task inputTask { get; set; }
     private bool NewTask = false;
+    private TaskDatabase db = new TaskDatabase();
     public EditTask(Task inputTask)
     {
         InitializeComponent();
@@ -37,16 +38,16 @@ public partial class EditTask : ContentPage
         }
         else if(!NewTask)
         {
-            TaskDatabase.SetModelToTask(ordernumber, ModelInput.Text);
-            TaskDatabase.SetNoteToTask(ordernumber, NotesInput.Text);
-            TaskDatabase.SetDateToTask(ordernumber, DateInput.Date.ToString("yyyy-MM-dd"));
-            TaskDatabase.SetTimeToTask(ordernumber, TimeInput.Time.ToString());
-            TaskDatabase.SetAddressToTask(ordernumber, AddressInput.Text);
+            db.SetModelToTask(ordernumber, ModelInput.Text);
+            db.SetNoteToTask(ordernumber, NotesInput.Text);
+            db.SetDateToTask(ordernumber, DateInput.Date.ToString("yyyy-MM-dd"));
+            db.SetTimeToTask(ordernumber, TimeInput.Time.ToString());
+            db.SetAddressToTask(ordernumber, AddressInput.Text);
             await Navigation.PopAsync();
 
         } else
         {
-            TaskDatabase.CreateTask(new Task(ordernumber, AddressInput.Text, DateInput.Date.ToString("yyyy-MM-dd"), ModelInput.Text, NotesInput.Text, TimeInput.Time.ToString()));
+            db.CreateTask(new Task(ordernumber, AddressInput.Text, DateInput.Date.ToString("yyyy-MM-dd"), ModelInput.Text, NotesInput.Text, TimeInput.Time.ToString()));
             await Navigation.PopAsync();
 
         }

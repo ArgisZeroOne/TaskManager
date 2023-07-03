@@ -4,7 +4,9 @@ namespace Something;
 
 public partial class EnterPage : ContentPage
 {
-	public EnterPage()
+    UsersDatabase UserDB = new UsersDatabase();
+
+    public EnterPage()
 	{
 		InitializeComponent();
 		
@@ -37,7 +39,6 @@ public partial class EnterPage : ContentPage
 	{
 		
 		User user = UsersDatabase.ReadLocalUserSettings();
-        UsersDatabase UserDB = new UsersDatabase();
 		var username = user.Username();
 		var password = user.Password();
 		User userInDB = null;
@@ -52,14 +53,11 @@ public partial class EnterPage : ContentPage
     }
 	private void OnEnterBtnClicked(object sender, EventArgs e)
 	{
-		UsersDatabase UserDB = new UsersDatabase();
 		
 		User user = UserDB.ChooseUser(usernameInput.Text,PasswordInput.Text);
-		
 		UsersDatabase.WriteLocalUserSettings(user);
 		InitUser();
     }
-
     private void exit_Clicked(object sender, EventArgs e)
     {
 		Preferences.Default.Clear();

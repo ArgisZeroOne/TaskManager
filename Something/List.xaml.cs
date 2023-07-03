@@ -7,48 +7,38 @@ public partial class List : ContentPage
 {
     List<Task> taskArray = new List<Task> { new Task(" ", " ", " ", " ", " ", " ") };
     protected bool UserLogIn = false;
+    TaskDatabase db = new TaskDatabase();
+    UsersDatabase UserDB = new UsersDatabase();
     public List()
-	{
-		InitializeComponent();
-
-	}
-    protected override void OnAppearing()
     {
-        try
-        {
-            base.OnAppearing();
-
-            
-            InitUser();
-        }
-        catch (Exception ex)
-        {
-
-        }
-
+        InitializeComponent();
     }
-    public async void InitUser()
+    protected override void OnAppearing()
+    { 
+            base.OnAppearing();
+            InitUser();
+    }
+    public void InitUser()
     {
 
         try
         {
             UserLogIn = false;
             User user = UsersDatabase.ReadLocalUserSettings();
-            UsersDatabase UserDB = new UsersDatabase();
             var username = user.Username();
             var password = user.Password();
             var userInDB = UserDB.ChooseUser(username, password);
             if (userInDB == null)
             {
                 
-                taskArray = TaskDatabase.GetTasksFromDBToDate("01-01-1990");
+                taskArray = db.GetTasksFromDBToDate("01-01-1990");
                 TasksListView.ItemsSource = taskArray;
                 
             }
             else
             {
                 UserLogIn = true;
-                taskArray = TaskDatabase.GetTasksFromDBToDate(DatePicker.Date.ToString("yyyy-MM-dd"));
+                taskArray = db.GetTasksFromDBToDate(DatePicker.Date.ToString("yyyy-MM-dd"));
                 TasksListView.ItemsSource = taskArray;
          
             }
@@ -61,9 +51,7 @@ public partial class List : ContentPage
     }
     private void DatePicker_DateSelected(object sender, DateChangedEventArgs e)
     {
-      
         InitUser();
-
     }
 
     private async void Button_Clicked(object sender, EventArgs e)
