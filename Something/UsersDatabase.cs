@@ -4,24 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 using System.Security.Cryptography;
 
 namespace Something
 {
     class UsersDatabase
     {
-        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
-
-        private MySqlConnection _usersData;
-        void Connect(string connectionString)
-        {
-            this._usersData = new MySqlConnection(connectionString);
-        }
+        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None"; //Характеристики подключения к MySQL
         void DeleteLocalUser()
         {
            Preferences.Default.Clear();
-        }
+        }  // Метод удаления локальных данных пользователя
         public static User ReadLocalUserSettings()
         {
             User user = new User(
@@ -33,7 +27,7 @@ namespace Something
                 );
            
             return user;
-        }
+        } // Метод чтения локальных данных пользователя
         public static void WriteLocalUserSettings(User user)
         {
             Preferences.Default.Set("username", user.Username());
@@ -42,7 +36,7 @@ namespace Something
             Preferences.Default.Set("lastname",user.LastName());
             Preferences.Default.Set("rights", user.Rights());
             
-        }
+        } // Метод записи локальных данных пользователя
         public User ChooseUser(string username, string password)
         {
             byte[] messageBytes = Encoding.UTF8.GetBytes(password);
@@ -91,6 +85,6 @@ namespace Something
                
 
             }
-        }
+        } // Получения и верификация данных пользователя из базы данных MySQL
     }
 }

@@ -12,8 +12,7 @@ namespace Something
     class TaskDatabase
     {
 
-        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None";
-       
+        string connectionString = "Server=90.189.194.247;User ID=root;Password=root;Database=task_manager;SslMode=None"; //Характеристики подключения к MySQL
         public void CreateTask(Task task)
         {
           
@@ -36,7 +35,7 @@ namespace Something
           
 
             
-        }
+        } //Метод создания задания в базе данных MySQL
         List<Task> ReadTask(MySqlCommand cmd)
         {
             List<Task> taskList = new List<Task>();
@@ -62,7 +61,7 @@ namespace Something
                 taskList.Add(new Task());
                 return taskList;
             }
-        }
+        } // Метод считывания данных заданий из базы данных
         void ExecuteSet(string orderNumber, string newvalue, string param, MySqlConnection connection, string query)
         {
             MySqlCommand cmd = new MySqlCommand(query, connection);
@@ -72,7 +71,7 @@ namespace Something
             cmd.Parameters.AddWithValue("@ordernumber", orderNumber);
 
             cmd.ExecuteNonQuery();
-        }
+        } //Универсальный метод для изменения конкретных данных
         public void SetTimeToTask(string orderNumber, string newTime)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -84,7 +83,7 @@ namespace Something
 
 
             };
-        }
+        } // Метод изменения времени задания
         public  void SetAddressToTask(string orderNumber,  string newAddress)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -96,17 +95,17 @@ namespace Something
 
                
             }
-        }
+        } // Метод изменения адреса задания
         public  void SetDateToTask(string orderNumber, string newDate)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                ExecuteSet(orderNumber,orderNumber,"@date",connection,"Update TasksData,(select * from TasksData where orderNumber = @ordernumber)" +
+                ExecuteSet(orderNumber,newDate,"@date",connection,"Update TasksData,(select * from TasksData where orderNumber = @ordernumber)" +
                     " as Selected set TasksData.date = @date" +
                     "  where TasksData.orderNumber = Selected.orderNumber");
             }
-        }
+        } //Метод изменения даты задания 
         public  void SetModelToTask(string orderNumber, string newModel)
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -118,7 +117,7 @@ namespace Something
 
             
             }
-        }
+        } // Метод изменения модели задания
         public  void SetNoteToTask(string orderNumber, string newNote)
         {
             List<Task> tasks = new List<Task>();
@@ -131,7 +130,7 @@ namespace Something
                     " where TasksData.orderNumber = Selected.orderNumber");
 
             }
-        }
+        } // Метод изменения примечаний задания
         public  List<Task> GetTasksFromDBToDate(string date)
         {
 
@@ -151,7 +150,7 @@ namespace Something
 
             }
             return tasks;
-        }
+        } // Метод получения заданий к определённой дате
     }
    
 }
